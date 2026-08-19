@@ -1,0 +1,8 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+密钥库.md
+**/密钥库.md
+node_modules/
+dist/
