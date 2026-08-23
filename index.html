@@ -4,87 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Tibbers AMZ Tool</title>
-    <meta
-      name="description"
-      content="Amazon US 运营分析工具前台"
-    />
-    <style>
-      :root {
-        color-scheme: light;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-        color: #172033;
-        background: #f4f6f8;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        min-width: 320px;
-      }
-
-      main {
-        display: grid;
-        min-height: 100vh;
-        place-items: center;
-        padding: 24px;
-      }
-
-      section {
-        width: min(100%, 640px);
-        padding: 40px;
-        border: 1px solid #dfe4ea;
-        border-radius: 8px;
-        background: #ffffff;
-        box-shadow: 0 12px 32px rgb(23 32 51 / 8%);
-      }
-
-      h1 {
-        margin: 0 0 12px;
-        font-size: clamp(1.75rem, 5vw, 2.5rem);
-        line-height: 1.15;
-      }
-
-      p {
-        margin: 0;
-        color: #526174;
-        line-height: 1.7;
-      }
-
-      .status {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-top: 24px;
-        color: #176b46;
-        font-size: 0.95rem;
-        font-weight: 600;
-      }
-
-      .status::before {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #22a06b;
-        content: "";
-      }
-
-      @media (max-width: 520px) {
-        section {
-          padding: 28px 24px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
-    <main>
-      <section>
-        <h1>Tibbers AMZ Tool</h1>
-        <p>Amazon US 运营分析工具前台已准备就绪。</p>
-        <div class="status">基础页面运行正常</div>
+  <body class="auth-page">
+    <main class="auth-layout">
+      <section class="auth-intro" aria-labelledby="auth-title">
+        <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Tibbers AMZ</span></div>
+        <p class="eyebrow">AMAZON US OPERATIONS</p>
+        <h1 id="auth-title">关键词作战工具</h1>
+        <p class="intro-copy">上传广告搜索词报表，集中查看关键词热度、竞争格局和广告实绩。</p>
+        <div class="intro-meta"><span class="status-dot status-ready" aria-hidden="true"></span><span>基础分析服务已就绪</span></div>
+      </section>
+
+      <section class="auth-panel panel" aria-label="账号登录">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">ACCOUNT</p>
+            <h2 id="auth-mode-title">登录</h2>
+          </div>
+          <div class="segmented" role="group" aria-label="账号模式">
+            <button class="segment is-active" type="button" data-mode="login">登录</button>
+            <button class="segment" type="button" data-mode="register">注册</button>
+          </div>
+        </div>
+
+        <form id="auth-form" class="stack-form">
+          <label for="email">邮箱</label>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com" />
+          <label for="password">密码</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" minlength="6" required placeholder="至少 6 位" />
+          <button id="auth-submit" class="button button-primary" type="submit">进入工具 <span aria-hidden="true">→</span></button>
+          <p id="auth-message" class="form-message" role="status" aria-live="polite"></p>
+        </form>
       </section>
     </main>
+    <script src="vendor/supabase.min.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="app.js"></script>
+    <script src="auth.js"></script>
   </body>
 </html>

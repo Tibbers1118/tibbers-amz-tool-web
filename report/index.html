@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>分析报告 - Tibbers AMZ</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Tibbers AMZ</span></div>
+      <div class="header-spacer"></div>
+      <a class="button button-secondary button-small" href="../tool/"><span aria-hidden="true">←</span> 返回工具</a>
+    </header>
+    <main class="page-shell">
+      <div class="tool-intro">
+        <div><p class="eyebrow">ANALYSIS REPORT</p><h1 id="report-title">分析报告</h1><p id="report-meta" class="page-lede">正在读取报告…</p></div>
+      </div>
+      <div class="report-toolbar"><a id="download-report" class="button button-secondary button-small" href="#" download hidden><span aria-hidden="true">↓</span> 下载 HTML 报告</a><span id="report-message" class="form-message" role="status" aria-live="polite"></span></div>
+      <iframe id="report-frame" class="report-frame" title="关键词分析报告" sandbox="allow-same-origin"></iframe>
+    </main>
+    <script src="../vendor/supabase.min.js"></script>
+    <script src="../supabase-config.js"></script>
+    <script src="../app.js"></script>
+    <script src="report.js"></script>
+  </body>
+</html>

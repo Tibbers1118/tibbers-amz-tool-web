@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>工具台 - Tibbers AMZ</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Tibbers AMZ</span></div>
+      <div class="header-spacer"></div>
+      <span id="account-email" class="account-label"></span>
+      <button id="logout" class="button button-secondary button-small" type="button">退出</button>
+    </header>
+    <main class="page-shell">
+      <section class="tool-intro">
+        <div>
+          <p class="eyebrow">AMAZON US OPERATIONS</p>
+          <h1>关键词作战</h1>
+          <p class="page-lede">上传搜索词报表，创建一项关键词分析任务。</p>
+        </div>
+      </section>
+
+      <section class="tool-form panel" aria-labelledby="submit-title">
+        <div class="panel-heading">
+          <div><p class="eyebrow">NEW ANALYSIS</p><h2 id="submit-title">创建分析任务</h2></div>
+        </div>
+        <form id="task-form" class="tool-form-grid">
+          <div class="field"><label for="asin">ASIN</label><input id="asin" name="asin" type="text" inputmode="text" autocomplete="off" maxlength="10" placeholder="B09V366BDY" required /></div>
+          <div class="field"><label for="report-file">广告搜索词报表（.xlsx / .csv，最大 50 MB）</label><input id="report-file" name="report-file" type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" required /></div>
+          <button id="submit-task" class="button button-primary" type="submit"><span aria-hidden="true">↑</span> 上传并分析</button>
+        </form>
+        <p id="task-message" class="form-message" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="task-section" aria-labelledby="tasks-title">
+        <div class="section-heading"><div><h2 id="tasks-title">我的任务</h2><p>状态每 30 秒自动刷新</p></div><button id="refresh-tasks" class="button button-secondary button-small" type="button"><span aria-hidden="true">↻</span> 刷新</button></div>
+        <div class="table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>提交时间</th><th>ASIN</th><th>状态</th><th>报告</th><th>失败原因</th></tr></thead><tbody id="task-rows"><tr><td colspan="5" class="empty-state">正在读取任务…</td></tr></tbody></table></div></div>
+      </section>
+    </main>
+    <script src="../vendor/supabase.min.js"></script>
+    <script src="../supabase-config.js"></script>
+    <script src="../app.js"></script>
+    <script src="tool.js"></script>
+  </body>
+</html>
