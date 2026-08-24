@@ -10,6 +10,9 @@
     const message = String(error?.message || error || '操作失败');
     if (/invalid login credentials/i.test(message)) return '邮箱或密码不正确';
     if (/email not confirmed/i.test(message)) return '邮箱还没有完成验证';
+    if (/email rate limit exceeded|rate limit/i.test(message)) {
+      return '注册邮件发送次数已达上限。请稍后再试；课程测试可在 Supabase 的 Email 设置中关闭邮箱确认。';
+    }
     if (/user already registered/i.test(message)) return '这个邮箱已经注册，请直接登录';
     if (/password should be at least/i.test(message)) return '密码至少需要 6 位';
     if (/duplicate|already exists/i.test(message)) return '记录已经存在，请刷新后重试';
