@@ -18,19 +18,25 @@
       </div>
     </header>
     <main class="page-shell">
+      <section class="workspace-signalbar" aria-label="工作区运行状态">
+        <div class="signalbar-lead"><span class="live-indicator" aria-hidden="true"></span><span>LIVE WORKSPACE</span></div>
+        <div class="signalbar-track" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="signalbar-readout"><span>QUEUE</span><strong id="queue-state">READY</strong></div>
+        <div class="signalbar-readout"><span>SYNC</span><strong id="system-time">--:--:--</strong></div>
+      </section>
       <section class="page-hero tool-hero">
         <div>
           <p class="eyebrow">WORKSPACE / KEYWORD OPS</p>
           <h1>关键词作战</h1>
           <p class="page-lede">集中管理搜索词分析任务，追踪从报表到报告的每一次运行。</p>
         </div>
-        <div class="hero-status"><span>ANALYSIS ENGINE</span><strong><span class="status-dot status-ready" aria-hidden="true"></span>可用</strong><small>后台 Worker 在线</small></div>
+        <div class="hero-status"><span>ANALYSIS ENGINE</span><strong><span class="status-dot status-ready" aria-hidden="true"></span>可用</strong><small>后台 Worker 在线</small><div class="signal-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="signal-caption">QUEUE / READY / 24×7</span></div>
       </section>
 
       <section class="metrics-strip" aria-label="任务概览">
-        <div class="metric"><span class="metric-label">全部任务</span><strong id="task-count">-</strong><small>当前工作区累计提交</small></div>
-        <div class="metric"><span class="metric-label">已完成</span><strong id="completed-count">-</strong><small>可直接查看报告</small></div>
-        <div class="metric"><span class="metric-label">处理中</span><strong id="processing-count">-</strong><small>后台正在分析</small></div>
+        <div class="metric"><div class="metric-head"><span class="metric-label">全部任务</span><span class="metric-index">01</span></div><strong id="task-count">-</strong><div class="metric-track" aria-hidden="true"><span id="task-fill"></span></div><small>当前工作区累计提交</small></div>
+        <div class="metric"><div class="metric-head"><span class="metric-label">已完成</span><span class="metric-index">02</span></div><strong id="completed-count">-</strong><div class="metric-track" aria-hidden="true"><span id="completed-fill"></span></div><small>可直接查看报告</small></div>
+        <div class="metric"><div class="metric-head"><span class="metric-label">处理中</span><span class="metric-index">03</span></div><strong id="processing-count">-</strong><div class="metric-track" aria-hidden="true"><span id="processing-fill"></span></div><small>后台正在分析</small></div>
       </section>
 
       <section class="tool-form panel" aria-labelledby="submit-title">
@@ -38,9 +44,16 @@
           <div><p class="eyebrow">NEW ANALYSIS</p><h2 id="submit-title">创建分析任务</h2></div>
           <span class="panel-note">搜索词报表将进入私有分析队列</span>
         </div>
+        <div class="analysis-path" aria-label="分析流水线">
+          <div class="analysis-step is-active" data-pipeline-step="input"><span>01</span><strong>INPUT</strong><small>读取报表</small></div>
+          <span class="analysis-connector" aria-hidden="true"></span>
+          <div class="analysis-step" data-pipeline-step="enrich"><span>02</span><strong>ENRICH</strong><small>补齐市场信号</small></div>
+          <span class="analysis-connector" aria-hidden="true"></span>
+          <div class="analysis-step" data-pipeline-step="decide"><span>03</span><strong>DECIDE</strong><small>生成运营建议</small></div>
+        </div>
         <form id="task-form" class="tool-form-grid">
           <div class="field"><label for="asin">ASIN</label><input id="asin" name="asin" type="text" inputmode="text" autocomplete="off" maxlength="10" placeholder="B09V366BDY" required /></div>
-          <div class="field"><label for="report-file">广告搜索词报表</label><label class="file-drop" for="report-file"><span class="file-drop-icon" aria-hidden="true">+</span><span class="file-drop-copy"><strong id="file-name">选择报表文件</strong><small>.XLSX 或 .CSV · 最大 50 MB</small></span><span class="file-drop-action">浏览</span></label><input id="report-file" class="visually-hidden" name="report-file" type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" required /></div>
+          <div class="field"><label for="report-file">广告搜索词报表</label><label class="file-drop" for="report-file"><span class="file-drop-icon" aria-hidden="true">+</span><span class="file-drop-copy"><strong id="file-name">选择报表文件</strong><small id="file-meta">.XLSX 或 .CSV · 最大 50 MB</small></span><span id="file-status" class="file-status">WAITING</span><span class="file-drop-action">浏览</span></label><input id="report-file" class="visually-hidden" name="report-file" type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" required /></div>
           <button id="submit-task" class="button button-primary" type="submit"><span aria-hidden="true">↑</span> 上传并分析</button>
         </form>
         <p id="task-message" class="form-message" role="status" aria-live="polite"></p>
@@ -48,7 +61,7 @@
 
       <section class="task-section" aria-labelledby="tasks-title">
         <div class="section-heading"><div><p class="eyebrow">RUN HISTORY</p><h2 id="tasks-title">我的任务</h2></div><div class="section-tools"><span id="last-refresh" class="last-refresh">正在同步</span><button id="refresh-tasks" class="button button-secondary button-small button-icon" type="button" title="刷新任务" aria-label="刷新任务"><span aria-hidden="true">↻</span></button></div></div>
-        <div class="table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>提交时间</th><th>ASIN</th><th>状态</th><th>报告</th><th>失败原因</th></tr></thead><tbody id="task-rows"><tr><td colspan="5" class="empty-state">正在读取任务…</td></tr></tbody></table></div></div>
+        <div class="table-panel"><div class="table-panel-head"><span class="table-panel-code">TASK STREAM / 01</span><span id="task-stream-status">CONNECTING</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>提交时间</th><th>ASIN</th><th>状态</th><th>报告</th><th>失败原因</th></tr></thead><tbody id="task-rows"><tr><td colspan="5" class="empty-state">正在读取任务…</td></tr></tbody></table></div></div>
       </section>
     </main>
     <script src="../vendor/supabase.min.js"></script>

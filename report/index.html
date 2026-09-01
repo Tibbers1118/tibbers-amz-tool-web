@@ -15,14 +15,21 @@
     </header>
     <main class="page-shell">
       <section class="page-hero report-hero">
-        <div><p class="eyebrow">ANALYSIS REPORT</p><h1 id="report-title">分析报告</h1><p id="report-meta" class="page-lede">正在读取报告…</p></div>
+        <div><p class="eyebrow">ANALYSIS REPORT / 01</p><h1 id="report-title">分析报告</h1><p id="report-meta" class="page-lede">正在读取报告…</p></div>
         <div class="report-state"><p class="eyebrow">STATUS</p><strong><span id="report-state-dot" class="status-dot status-pending" aria-hidden="true"></span><span id="report-state-label">读取中</span></strong></div>
       </section>
       <section class="report-toolbar" aria-label="报告操作">
-        <div class="report-toolbar-note"><span class="status-dot status-ready" aria-hidden="true"></span><span id="report-message" class="form-message" role="status" aria-live="polite">正在读取报告…</span></div>
+        <div class="report-toolbar-note"><span class="report-marker" aria-hidden="true">01</span><span class="status-dot status-ready" aria-hidden="true"></span><span id="report-message" class="form-message" role="status" aria-live="polite">正在读取报告…</span></div>
         <div class="report-toolbar-actions"><a id="download-report" class="button button-primary button-small" href="#" download hidden><span aria-hidden="true">↓</span> 下载 HTML 报告</a></div>
       </section>
+      <section class="report-command-strip" aria-label="报告输出状态">
+        <div class="command-strip-lead"><span class="live-indicator" aria-hidden="true"></span><span>OUTPUT CHANNEL</span><strong id="report-channel">HTML / PRIVATE</strong></div>
+        <div class="command-strip-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="command-strip-readout"><span>REPORT ID</span><strong id="report-short-id">--------</strong></div>
+        <div class="command-strip-readout"><span>VIEW</span><strong id="frame-state">WAITING</strong></div>
+      </section>
       <section class="report-stage">
+        <div class="report-stage-bar"><span class="stage-bar-dot" aria-hidden="true"></span><span>EMBEDDED REPORT VIEW</span><span id="report-loaded-at" class="stage-bar-time">SECURE CHANNEL</span></div>
         <iframe id="report-frame" class="report-frame" title="关键词分析报告" sandbox="allow-same-origin"></iframe>
       </section>
     </main>

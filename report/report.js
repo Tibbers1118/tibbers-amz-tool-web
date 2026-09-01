@@ -7,6 +7,10 @@
   const download = document.getElementById('download-report');
   const stateLabel = document.getElementById('report-state-label');
   const stateDot = document.getElementById('report-state-dot');
+  const reportChannel = document.getElementById('report-channel');
+  const reportShortId = document.getElementById('report-short-id');
+  const frameState = document.getElementById('frame-state');
+  const reportLoadedAt = document.getElementById('report-loaded-at');
   const taskId = new URLSearchParams(window.location.search).get('task');
 
   function setReportState(label, stateClass) {
@@ -19,20 +23,27 @@
     if (!session) return;
     if (!taskId) {
       setReportState('缺少编号', 'status-failed');
+      reportShortId.textContent = 'MISSING';
+      frameState.textContent = 'BLOCKED';
       app.setMessage(message, '缺少报告任务编号。', 'error');
       return;
     }
     const result = await app.client.from('analysis_tasks').select('id,asin,status,report_url,created_at,failure_reason').eq('id', taskId).maybeSingle();
     if (result.error || !result.data) {
       setReportState('读取失败', 'status-failed');
+      reportShortId.textContent = 'NOT FOUND';
+      frameState.textContent = 'ERROR';
       app.setMessage(message, result.error ? app.friendlyError(result.error) : '找不到这份报告。', 'error');
       return;
     }
     const task = result.data;
+    reportShortId.textContent = task.id.slice(0, 8).toUpperCase();
     setReportState(app.statusLabel(task.status), task.status === '已完成' ? 'status-done' : task.status === '失败' ? 'status-failed' : 'status-pending');
     title.textContent = `${task.asin} 关键词报告`;
     meta.textContent = `提交时间：${app.formatDate(task.created_at)}　|　状态：${app.statusLabel(task.status)}`;
     if (task.status !== '已完成' || !task.report_url) {
+      reportChannel.textContent = 'HTML / QUEUED';
+      frameState.textContent = 'WAITING';
       app.setMessage(message, task.failure_reason || '报告还没有完成。', task.status === '失败' ? 'error' : '');
       return;
     }
@@ -41,6 +52,9 @@
       if (!response.ok) throw new Error(`报告读取失败（HTTP ${response.status}），请重新生成。`);
       const html = await response.text();
       frame.srcdoc = html;
+      frameState.textContent = 'LOADED';
+      reportChannel.textContent = 'HTML / PRIVATE';
+      reportLoadedAt.textContent = `LOADED ${new Date().toLocaleTimeString('zh-CN', { hour12: false })}`;
       const blobUrl = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
       download.href = blobUrl;
       download.download = `${task.asin}-keyword-report.html`;
@@ -49,6 +63,9 @@
       app.setMessage(message, '报告已加载。', 'success');
     } catch (error) {
       setReportState('读取失败', 'status-failed');
+      frameState.textContent = 'ERROR';
+      reportChannel.textContent = 'HTML / ERROR';
+      reportLoadedAt.textContent = 'CHANNEL ERROR';
       app.setMessage(message, app.friendlyError(error), 'error');
     }
   })();
