@@ -10,7 +10,11 @@
     mode = nextMode;
     title.textContent = mode === 'login' ? '登录' : '注册';
     submit.innerHTML = mode === 'login' ? '进入工具 <span aria-hidden="true">→</span>' : '创建账号 <span aria-hidden="true">→</span>';
-    document.querySelectorAll('[data-mode]').forEach((button) => button.classList.toggle('is-active', button.dataset.mode === mode));
+    document.querySelectorAll('[data-mode]').forEach((button) => {
+      const active = button.dataset.mode === mode;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
     app.setMessage(message, '');
   }
 

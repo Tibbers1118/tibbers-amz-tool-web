@@ -9,15 +9,22 @@
   <body>
     <header class="site-header">
       <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Tibbers AMZ</span></div>
+      <nav class="header-nav" aria-label="主导航"><span class="is-active">分析报告</span><span>AMAZON US</span></nav>
       <div class="header-spacer"></div>
-      <a class="button button-secondary button-small" href="../tool/"><span aria-hidden="true">←</span> 返回工具</a>
+      <a class="button button-dark button-small" href="../tool/"><span aria-hidden="true">←</span> 返回工具</a>
     </header>
     <main class="page-shell">
-      <div class="tool-intro">
+      <section class="page-hero report-hero">
         <div><p class="eyebrow">ANALYSIS REPORT</p><h1 id="report-title">分析报告</h1><p id="report-meta" class="page-lede">正在读取报告…</p></div>
-      </div>
-      <div class="report-toolbar"><a id="download-report" class="button button-secondary button-small" href="#" download hidden><span aria-hidden="true">↓</span> 下载 HTML 报告</a><span id="report-message" class="form-message" role="status" aria-live="polite"></span></div>
-      <iframe id="report-frame" class="report-frame" title="关键词分析报告" sandbox="allow-same-origin"></iframe>
+        <div class="report-state"><p class="eyebrow">STATUS</p><strong><span id="report-state-dot" class="status-dot status-pending" aria-hidden="true"></span><span id="report-state-label">读取中</span></strong></div>
+      </section>
+      <section class="report-toolbar" aria-label="报告操作">
+        <div class="report-toolbar-note"><span class="status-dot status-ready" aria-hidden="true"></span><span id="report-message" class="form-message" role="status" aria-live="polite">正在读取报告…</span></div>
+        <div class="report-toolbar-actions"><a id="download-report" class="button button-primary button-small" href="#" download hidden><span aria-hidden="true">↓</span> 下载 HTML 报告</a></div>
+      </section>
+      <section class="report-stage">
+        <iframe id="report-frame" class="report-frame" title="关键词分析报告" sandbox="allow-same-origin"></iframe>
+      </section>
     </main>
     <script src="../vendor/supabase.min.js"></script>
     <script src="../supabase-config.js"></script>
