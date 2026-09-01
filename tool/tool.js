@@ -4,7 +4,22 @@
   const message = document.getElementById('task-message');
   const form = document.getElementById('task-form');
   const submit = document.getElementById('submit-task');
+  const fileInput = document.getElementById('report-file');
+  const fileName = document.getElementById('file-name');
+  const lastRefresh = document.getElementById('last-refresh');
+  const taskCount = document.getElementById('task-count');
+  const completedCount = document.getElementById('completed-count');
+  const processingCount = document.getElementById('processing-count');
   let session;
+
+  function renderTaskSummary(tasks) {
+    const processing = tasks.filter((task) => task.status === '待处理' || task.status === '进行中').length;
+    const completed = tasks.filter((task) => task.status === '已完成').length;
+    taskCount.textContent = String(tasks.length);
+    completedCount.textContent = String(completed);
+    processingCount.textContent = String(processing);
+    lastRefresh.textContent = `最近同步 ${new Date().toLocaleTimeString('zh-CN', { hour12: false })}`;
+  }
 
   function renderTasks(tasks) {
     if (!tasks.length) {
@@ -36,13 +51,20 @@
   async function loadTasks() {
     const result = await app.client.from('analysis_tasks').select('id,asin,status,report_url,created_at,failure_reason').order('created_at', { ascending: false });
     if (result.error) {
+      lastRefresh.textContent = '同步失败';
       rowsElement.innerHTML = `<tr><td colspan="5" class="empty-state">${app.friendlyError(result.error)}</td></tr>`;
       return;
     }
-    renderTasks(result.data || []);
+    const tasks = result.data || [];
+    renderTaskSummary(tasks);
+    renderTasks(tasks);
   }
 
   document.getElementById('refresh-tasks').addEventListener('click', loadTasks);
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    fileName.textContent = file ? file.name : '选择报表文件';
+  });
   document.getElementById('logout').addEventListener('click', async () => {
     await app.client.auth.signOut();
     window.location.href = '../';

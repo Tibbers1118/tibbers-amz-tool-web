@@ -9,33 +9,45 @@
   <body>
     <header class="site-header">
       <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Tibbers AMZ</span></div>
+      <nav class="header-nav" aria-label="主导航"><span class="is-active">关键词作战</span><span>AMAZON US</span></nav>
       <div class="header-spacer"></div>
-      <span id="account-email" class="account-label"></span>
-      <button id="logout" class="button button-secondary button-small" type="button">退出</button>
+      <div class="header-meta">
+        <span class="header-status"><span class="status-dot status-ready" aria-hidden="true"></span>系统在线</span>
+        <span id="account-email" class="account-label"></span>
+        <button id="logout" class="button button-dark button-small" type="button">退出</button>
+      </div>
     </header>
     <main class="page-shell">
-      <section class="tool-intro">
+      <section class="page-hero tool-hero">
         <div>
-          <p class="eyebrow">AMAZON US OPERATIONS</p>
+          <p class="eyebrow">WORKSPACE / KEYWORD OPS</p>
           <h1>关键词作战</h1>
-          <p class="page-lede">上传搜索词报表，创建一项关键词分析任务。</p>
+          <p class="page-lede">集中管理搜索词分析任务，追踪从报表到报告的每一次运行。</p>
         </div>
+        <div class="hero-status"><span>ANALYSIS ENGINE</span><strong><span class="status-dot status-ready" aria-hidden="true"></span>可用</strong><small>后台 Worker 在线</small></div>
+      </section>
+
+      <section class="metrics-strip" aria-label="任务概览">
+        <div class="metric"><span class="metric-label">全部任务</span><strong id="task-count">-</strong><small>当前工作区累计提交</small></div>
+        <div class="metric"><span class="metric-label">已完成</span><strong id="completed-count">-</strong><small>可直接查看报告</small></div>
+        <div class="metric"><span class="metric-label">处理中</span><strong id="processing-count">-</strong><small>后台正在分析</small></div>
       </section>
 
       <section class="tool-form panel" aria-labelledby="submit-title">
         <div class="panel-heading">
           <div><p class="eyebrow">NEW ANALYSIS</p><h2 id="submit-title">创建分析任务</h2></div>
+          <span class="panel-note">搜索词报表将进入私有分析队列</span>
         </div>
         <form id="task-form" class="tool-form-grid">
           <div class="field"><label for="asin">ASIN</label><input id="asin" name="asin" type="text" inputmode="text" autocomplete="off" maxlength="10" placeholder="B09V366BDY" required /></div>
-          <div class="field"><label for="report-file">广告搜索词报表（.xlsx / .csv，最大 50 MB）</label><input id="report-file" name="report-file" type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" required /></div>
+          <div class="field"><label for="report-file">广告搜索词报表</label><label class="file-drop" for="report-file"><span class="file-drop-icon" aria-hidden="true">+</span><span class="file-drop-copy"><strong id="file-name">选择报表文件</strong><small>.XLSX 或 .CSV · 最大 50 MB</small></span><span class="file-drop-action">浏览</span></label><input id="report-file" class="visually-hidden" name="report-file" type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" required /></div>
           <button id="submit-task" class="button button-primary" type="submit"><span aria-hidden="true">↑</span> 上传并分析</button>
         </form>
         <p id="task-message" class="form-message" role="status" aria-live="polite"></p>
       </section>
 
       <section class="task-section" aria-labelledby="tasks-title">
-        <div class="section-heading"><div><h2 id="tasks-title">我的任务</h2><p>状态每 30 秒自动刷新</p></div><button id="refresh-tasks" class="button button-secondary button-small" type="button"><span aria-hidden="true">↻</span> 刷新</button></div>
+        <div class="section-heading"><div><p class="eyebrow">RUN HISTORY</p><h2 id="tasks-title">我的任务</h2></div><div class="section-tools"><span id="last-refresh" class="last-refresh">正在同步</span><button id="refresh-tasks" class="button button-secondary button-small button-icon" type="button" title="刷新任务" aria-label="刷新任务"><span aria-hidden="true">↻</span></button></div></div>
         <div class="table-panel"><div class="table-scroll"><table class="data-table"><thead><tr><th>提交时间</th><th>ASIN</th><th>状态</th><th>报告</th><th>失败原因</th></tr></thead><tbody id="task-rows"><tr><td colspan="5" class="empty-state">正在读取任务…</td></tr></tbody></table></div></div>
       </section>
     </main>
