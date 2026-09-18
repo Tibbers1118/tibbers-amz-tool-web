@@ -41,12 +41,12 @@
   }
 
   function statusLabel(status) {
-    const labels = { 待处理: '待处理', 进行中: '分析中', 已完成: '已完成', 失败: '失败' };
+    const labels = { 待处理: '待处理', 进行中: '分析中', 待人工确认: '待人工确认', 已完成: '已完成', 失败: '失败' };
     return labels[status] || status || '-';
   }
 
   function statusClass(status) {
-    return { 待处理: 'status-pending', 进行中: 'status-pending', 已完成: 'status-done', 失败: 'status-failed' }[status] || 'status-pending';
+    return { 待处理: 'status-pending', 进行中: 'status-pending', 待人工确认: 'status-pending', 已完成: 'status-done', 失败: 'status-failed' }[status] || 'status-pending';
   }
 
   window.TibbersApp = { client, friendlyError, setMessage, requireSession, formatDate, statusLabel, statusClass };

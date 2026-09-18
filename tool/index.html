@@ -52,7 +52,8 @@
           <div class="analysis-step" data-pipeline-step="decide"><span>03</span><strong>DECIDE</strong><small>生成运营建议</small></div>
         </div>
         <form id="task-form" class="tool-form-grid">
-          <div class="field"><label for="asin">ASIN</label><input id="asin" name="asin" type="text" inputmode="text" autocomplete="off" maxlength="10" placeholder="B09V366BDY" required /></div>
+          <div class="field asin-list-field"><label>ASIN 列表</label><div id="asin-entries" class="asin-entries" aria-live="polite"></div><button id="add-asin-entry" class="button button-secondary button-small" type="button">+ 添加 ASIN</button><small class="field-help">每行标注自己或竞对；自己只能有 1 个。</small></div>
+          <div class="field"><label for="core-keyword">核心关键词（选填）</label><input id="core-keyword" name="core-keyword" type="text" autocomplete="off" maxlength="160" placeholder="不填则使用总表流量第一词" /></div>
           <div class="field"><label for="report-file">广告搜索词报表</label><label class="file-drop" for="report-file"><span class="file-drop-icon" aria-hidden="true">+</span><span class="file-drop-copy"><strong id="file-name">选择报表文件</strong><small id="file-meta">.XLSX 或 .CSV · 最大 50 MB</small></span><span id="file-status" class="file-status">WAITING</span><span class="file-drop-action">浏览</span></label><input id="report-file" class="visually-hidden" name="report-file" type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv" required /></div>
           <button id="submit-task" class="button button-primary" type="submit"><span aria-hidden="true">↑</span> 上传并分析</button>
         </form>
@@ -64,6 +65,9 @@
         <div class="table-panel"><div class="table-panel-head"><span class="table-panel-code">TASK STREAM / 01</span><span id="task-stream-status">CONNECTING</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>提交时间</th><th>ASIN</th><th>状态</th><th>报告</th><th>失败原因</th></tr></thead><tbody id="task-rows"><tr><td colspan="5" class="empty-state">正在读取任务…</td></tr></tbody></table></div></div>
       </section>
     </main>
+    <footer class="site-footer site-footer-light">
+      <span>备案号：</span><a href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">粤ICP备2026131354号</a>
+    </footer>
     <script src="../vendor/supabase.min.js"></script>
     <script src="../supabase-config.js"></script>
     <script src="../app.js"></script>

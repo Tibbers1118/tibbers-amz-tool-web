@@ -19,7 +19,36 @@
   const taskFill = document.getElementById('task-fill');
   const completedFill = document.getElementById('completed-fill');
   const processingFill = document.getElementById('processing-fill');
+  const asinEntries = document.getElementById('asin-entries');
+  const addAsinEntry = document.getElementById('add-asin-entry');
   let session;
+
+  function addAsinRow(initial = {}) {
+    const row = document.createElement('div');
+    row.className = 'asin-entry-row';
+    row.innerHTML = '<select class="asin-role" aria-label="ASIN 角色"><option value="self">自己</option><option value="competitor">竞对</option></select><input class="asin-entry" type="text" inputmode="text" autocomplete="off" maxlength="10" placeholder="B09V366BDY" aria-label="ASIN" /><button class="asin-remove" type="button" aria-label="移除此行">×</button>';
+    row.querySelector('.asin-role').value = initial.role || 'competitor';
+    row.querySelector('.asin-entry').value = initial.asin || '';
+    row.querySelector('.asin-remove').addEventListener('click', () => {
+      if (asinEntries.children.length > 1) row.remove();
+    });
+    asinEntries.append(row);
+  }
+
+  function readAsinEntries() {
+    const entries = [...asinEntries.querySelectorAll('.asin-entry-row')]
+      .map((row) => ({
+        asin: row.querySelector('.asin-entry').value.trim().toUpperCase(),
+        role: row.querySelector('.asin-role').value,
+      }))
+      .filter((entry) => entry.asin);
+    if (entries.some((entry) => !/^B0[A-Z0-9]{8}$/.test(entry.asin))) throw new Error('每个 ASIN 需要是 10 位、以 B0 开头的编号。');
+    if (entries.filter((entry) => entry.role === 'self').length !== 1) throw new Error('请标记且只标记 1 个“自己” ASIN。');
+    if (new Set(entries.map((entry) => entry.asin)).size !== entries.length) throw new Error('ASIN 列表存在重复项。');
+    const competitorCount = entries.filter((entry) => entry.role === 'competitor').length;
+    if (competitorCount < 3 || competitorCount > 5) throw new Error('请填写 3 至 5 个竞对 ASIN。');
+    return entries;
+  }
 
   function formatFileSize(bytes) {
     if (!bytes) return '0 KB';
@@ -91,7 +120,7 @@
   }
 
   async function loadTasks() {
-    const result = await app.client.from('analysis_tasks').select('id,asin,status,report_url,created_at,failure_reason').order('created_at', { ascending: false });
+    const result = await app.client.from('analysis_tasks').select('id,asin,status,report_url,created_at,failure_reason,task_type').order('created_at', { ascending: false });
     if (result.error) {
       lastRefresh.textContent = '同步失败';
       queueState.textContent = 'OFFLINE';
@@ -106,6 +135,7 @@
 
   document.getElementById('refresh-tasks').addEventListener('click', loadTasks);
   fileInput.addEventListener('change', () => setFileState(fileInput.files[0]));
+  addAsinEntry.addEventListener('click', () => addAsinRow({ role: 'competitor' }));
   document.getElementById('logout').addEventListener('click', async () => {
     await app.client.auth.signOut();
     window.location.href = '../';
@@ -113,17 +143,21 @@
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    const asin = document.getElementById('asin').value.trim().toUpperCase();
-    const file = document.getElementById('report-file').files[0];
-    if (!/^B0[A-Z0-9]{8}$/.test(asin)) {
-      app.setMessage(message, 'ASIN 需要是 10 位、以 B0 开头的编号。', 'error');
+    let entries;
+    try {
+      entries = readAsinEntries();
+    } catch (error) {
+      app.setMessage(message, error.message, 'error');
       return;
     }
+    const asin = entries.find((entry) => entry.role === 'self').asin;
+    const coreKeyword = document.getElementById('core-keyword').value.trim();
+    const file = document.getElementById('report-file').files[0];
     if (!file || !/\.(xlsx|csv)$/i.test(file.name)) {
       app.setMessage(message, '请选择 .xlsx 或 .csv 报表。', 'error');
       return;
     }
-    if (file.size > 50 * 1024 * 1024) {
+    if (file && file.size > 50 * 1024 * 1024) {
       app.setMessage(message, '文件不能超过 50 MB。', 'error');
       return;
     }
@@ -134,20 +168,34 @@
     fileStatus.className = 'file-status is-busy';
     app.setMessage(message, '正在上传报表…');
     const taskId = crypto.randomUUID();
-    const path = `${session.user.id}/${taskId}.xlsx`;
+    const path = file ? `${session.user.id}/${taskId}.${file.name.split('.').pop().toLowerCase()}` : null;
     let uploadCompleted = false;
     let taskCreated = false;
     try {
-      const upload = await app.client.storage.from('amazon-report-inbox').upload(path, file, { upsert: false, contentType: file.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      if (upload.error) throw upload.error;
-      uploadCompleted = true;
+      if (file) {
+        const upload = await app.client.storage.from('amazon-report-inbox').upload(path, file, { upsert: false, contentType: file.type || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        if (upload.error) throw upload.error;
+        uploadCompleted = true;
+      }
       setPipelineState('enrich');
       fileStatus.textContent = 'UPLOADED';
-      const insert = await app.client.from('analysis_tasks').insert({ id: taskId, user_id: session.user.id, asin, input_file_path: path, status: '待处理' });
+      const insert = await app.client.from('analysis_tasks').insert({
+        id: taskId,
+        user_id: session.user.id,
+        asin,
+        asin_entries: entries,
+        core_keyword: coreKeyword || null,
+        source_task_id: null,
+        task_type: 'full',
+        input_file_path: path,
+        status: '待处理',
+      });
       if (insert.error) throw insert.error;
       taskCreated = true;
       setPipelineState('decide');
       form.reset();
+      asinEntries.innerHTML = '';
+      addAsinRow({ role: 'self' });
       setFileState(null);
       app.setMessage(message, '任务已提交，后台开始处理。', 'success');
       await loadTasks();
@@ -168,6 +216,7 @@
   (async () => {
     session = await app.requireSession();
     if (!session) return;
+    addAsinRow({ role: 'self' });
     document.getElementById('account-email').textContent = session.user.email || '已登录';
     updateSystemTime();
     await loadTasks();
