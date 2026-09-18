@@ -21,6 +21,7 @@
   const processingFill = document.getElementById('processing-fill');
   const asinEntries = document.getElementById('asin-entries');
   const addAsinEntry = document.getElementById('add-asin-entry');
+  const analysisPeriod = document.getElementById('analysis-period');
   const taskSearch = document.getElementById('task-search');
   const taskStatusFilter = document.getElementById('task-status-filter');
   const taskArchiveFilter = document.getElementById('task-archive-filter');
@@ -121,7 +122,7 @@
 
   function renderTasks(tasks) {
     if (!tasks.length) {
-      rowsElement.innerHTML = '<tr><td colspan="6" class="empty-state">没有符合当前筛选条件的任务</td></tr>';
+      rowsElement.innerHTML = '<tr><td colspan="7" class="empty-state">没有符合当前筛选条件的任务</td></tr>';
       taskFilterCount.textContent = '0 条';
       return;
     }
@@ -151,6 +152,8 @@
       const asinCell = document.createElement('td');
       asinCell.className = 'task-asin-cell';
       asinCell.textContent = task.asin || '-';
+      const periodCell = document.createElement('td');
+      periodCell.textContent = task.analysis_period_days ? `${task.analysis_period_days} 天` : '历史任务';
       const statusCell = document.createElement('td');
       const status = document.createElement('span');
       status.className = 'inline-status';
@@ -162,7 +165,7 @@
       menu.querySelector('[data-task-action="pin"]').addEventListener('click', () => updateTaskFlag(task, 'is_pinned'));
       menu.querySelector('[data-task-action="archive"]').addEventListener('click', () => updateTaskFlag(task, 'is_archived'));
       actionCell.append(menu);
-      row.append(timeCell, asinCell, statusCell, reportCell, failureCell, actionCell);
+      row.append(timeCell, asinCell, periodCell, statusCell, reportCell, failureCell, actionCell);
       rowsElement.append(row);
     });
   }
@@ -185,12 +188,12 @@
   }
 
   async function loadTasks() {
-    const result = await app.client.from('analysis_tasks').select('id,asin,status,report_url,created_at,failure_reason,task_type,is_pinned,is_archived').order('created_at', { ascending: false });
+    const result = await app.client.from('analysis_tasks').select('id,asin,analysis_period_days,status,report_url,created_at,failure_reason,task_type,is_pinned,is_archived').order('created_at', { ascending: false });
     if (result.error) {
       lastRefresh.textContent = '同步失败';
       queueState.textContent = 'OFFLINE';
       taskStreamStatus.textContent = 'SYNC ERROR';
-      rowsElement.innerHTML = `<tr><td colspan="6" class="empty-state">${escapeHtml(app.friendlyError(result.error))}</td></tr>`;
+      rowsElement.innerHTML = `<tr><td colspan="7" class="empty-state">${escapeHtml(app.friendlyError(result.error))}</td></tr>`;
       return;
     }
     allTasks = result.data || [];
@@ -220,7 +223,12 @@
     }
     const asin = entries.find((entry) => entry.role === 'self').asin;
     const coreKeyword = document.getElementById('core-keyword').value.trim();
+    const analysisPeriodDays = Number(analysisPeriod.value);
     const file = document.getElementById('report-file').files[0];
+    if (![7, 14, 30].includes(analysisPeriodDays)) {
+      app.setMessage(message, '请选择 7 天、14 天或 30 天分析周期。', 'error');
+      return;
+    }
     if (!file || !/\.(xlsx|csv)$/i.test(file.name)) {
       app.setMessage(message, '请选择 .xlsx 或 .csv 报表。', 'error');
       return;
@@ -253,6 +261,7 @@
         asin,
         asin_entries: entries,
         core_keyword: coreKeyword || null,
+        analysis_period_days: analysisPeriodDays,
         source_task_id: null,
         task_type: 'full',
         input_file_path: path,
