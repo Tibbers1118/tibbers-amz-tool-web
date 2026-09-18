@@ -39,7 +39,7 @@
     const task = result.data;
     reportShortId.textContent = task.id.slice(0, 8).toUpperCase();
     setReportState(app.statusLabel(task.status), task.status === '已完成' ? 'status-done' : task.status === '失败' ? 'status-failed' : 'status-pending');
-    title.textContent = `${task.asin} 关键词报告`;
+    title.textContent = 'Amazon 链接诊断报告';
     meta.textContent = `提交时间：${app.formatDate(task.created_at)}　|　状态：${app.statusLabel(task.status)}`;
     if (task.status !== '已完成' || !task.report_url) {
       reportChannel.textContent = 'HTML / QUEUED';
@@ -57,7 +57,7 @@
       reportLoadedAt.textContent = `LOADED ${new Date().toLocaleTimeString('zh-CN', { hour12: false })}`;
       const blobUrl = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
       download.href = blobUrl;
-      download.download = `${task.asin}-keyword-report.html`;
+      download.download = `${task.asin}-amazon-listing-diagnosis-report.html`;
       download.hidden = false;
       setReportState('已完成', 'status-done');
       app.setMessage(message, '报告已加载。', 'success');

@@ -21,7 +21,16 @@
   const processingFill = document.getElementById('processing-fill');
   const asinEntries = document.getElementById('asin-entries');
   const addAsinEntry = document.getElementById('add-asin-entry');
+  const taskSearch = document.getElementById('task-search');
+  const taskStatusFilter = document.getElementById('task-status-filter');
+  const taskArchiveFilter = document.getElementById('task-archive-filter');
+  const taskFilterCount = document.getElementById('task-filter-count');
+  let allTasks = [];
   let session;
+
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>'"]/g, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[character]));
+  }
 
   function addAsinRow(initial = {}) {
     const row = document.createElement('div');
@@ -92,18 +101,42 @@
     lastRefresh.textContent = `最近同步 ${new Date().toLocaleTimeString('zh-CN', { hour12: false })}`;
   }
 
+  function getVisibleTasks() {
+    const query = taskSearch.value.trim().toLowerCase();
+    const status = taskStatusFilter.value;
+    const archive = taskArchiveFilter.value;
+    return allTasks
+      .filter((task) => {
+        if (archive === 'active' && task.is_archived) return false;
+        if (archive === 'archived' && !task.is_archived) return false;
+        if (status !== 'all' && task.status !== status) return false;
+        if (!query) return true;
+        return `${task.asin || ''} ${task.id || ''}`.toLowerCase().includes(query);
+      })
+      .sort((left, right) => {
+        if (Boolean(left.is_pinned) !== Boolean(right.is_pinned)) return left.is_pinned ? -1 : 1;
+        return new Date(right.created_at).getTime() - new Date(left.created_at).getTime();
+      });
+  }
+
   function renderTasks(tasks) {
     if (!tasks.length) {
-      rowsElement.innerHTML = '<tr><td colspan="5" class="empty-state">还没有分析任务</td></tr>';
+      rowsElement.innerHTML = '<tr><td colspan="6" class="empty-state">没有符合当前筛选条件的任务</td></tr>';
+      taskFilterCount.textContent = '0 条';
       return;
     }
+    taskFilterCount.textContent = `${tasks.length} 条`;
     rowsElement.innerHTML = '';
     tasks.forEach((task) => {
       const row = document.createElement('tr');
       const reportCell = document.createElement('td');
       const failureCell = document.createElement('td');
+      const actionCell = document.createElement('td');
       reportCell.className = 'right';
       failureCell.className = 'error-cell';
+      actionCell.className = 'task-actions-cell';
+      if (task.is_pinned) row.classList.add('is-pinned');
+      if (task.is_archived) row.classList.add('is-archived');
       if (task.status === '已完成') {
         const link = document.createElement('a');
         link.href = `../report/?task=${encodeURIComponent(task.id)}`;
@@ -113,27 +146,62 @@
         reportCell.textContent = '-';
       }
       failureCell.textContent = task.failure_reason || '-';
-      row.innerHTML = `<td>${app.formatDate(task.created_at)}</td><td>${task.asin}</td><td><span class="inline-status"><span class="status-dot ${app.statusClass(task.status)}"></span>${app.statusLabel(task.status)}</span></td>`;
-      row.append(reportCell, failureCell);
+      const timeCell = document.createElement('td');
+      timeCell.textContent = app.formatDate(task.created_at);
+      const asinCell = document.createElement('td');
+      asinCell.className = 'task-asin-cell';
+      asinCell.textContent = task.asin || '-';
+      const statusCell = document.createElement('td');
+      const status = document.createElement('span');
+      status.className = 'inline-status';
+      status.innerHTML = `<span class="status-dot ${escapeHtml(app.statusClass(task.status))}"></span>${escapeHtml(app.statusLabel(task.status))}${task.is_pinned ? '<span class="pin-mark" title="已置顶" aria-label="已置顶">★</span>' : ''}`;
+      statusCell.append(status);
+      const menu = document.createElement('details');
+      menu.className = 'task-action-menu';
+      menu.innerHTML = `<summary aria-label="打开任务操作菜单">•••</summary><div class="task-action-popover"><button type="button" data-task-action="pin">${task.is_pinned ? '取消置顶' : '置顶任务'}</button><button type="button" data-task-action="archive">${task.is_archived ? '取消归档' : '归档任务'}</button>${task.status === '已完成' ? `<a href="../report/?task=${encodeURIComponent(task.id)}">查看报告</a>` : ''}</div>`;
+      menu.querySelector('[data-task-action="pin"]').addEventListener('click', () => updateTaskFlag(task, 'is_pinned'));
+      menu.querySelector('[data-task-action="archive"]').addEventListener('click', () => updateTaskFlag(task, 'is_archived'));
+      actionCell.append(menu);
+      row.append(timeCell, asinCell, statusCell, reportCell, failureCell, actionCell);
       rowsElement.append(row);
     });
   }
 
+  function refreshTaskView() {
+    renderTasks(getVisibleTasks());
+  }
+
+  async function updateTaskFlag(task, field) {
+    const nextValue = !Boolean(task[field]);
+    const result = await app.client.from('analysis_tasks').update({ [field]: nextValue }).eq('id', task.id);
+    if (result.error) {
+      app.setMessage(message, app.friendlyError(result.error), 'error');
+      return;
+    }
+    task[field] = nextValue;
+    app.setMessage(message, field === 'is_pinned' ? (nextValue ? '任务已置顶。' : '任务已取消置顶。') : (nextValue ? '任务已归档。' : '任务已取消归档。'), 'success');
+    refreshTaskView();
+    renderTaskSummary(allTasks);
+  }
+
   async function loadTasks() {
-    const result = await app.client.from('analysis_tasks').select('id,asin,status,report_url,created_at,failure_reason,task_type').order('created_at', { ascending: false });
+    const result = await app.client.from('analysis_tasks').select('id,asin,status,report_url,created_at,failure_reason,task_type,is_pinned,is_archived').order('created_at', { ascending: false });
     if (result.error) {
       lastRefresh.textContent = '同步失败';
       queueState.textContent = 'OFFLINE';
       taskStreamStatus.textContent = 'SYNC ERROR';
-      rowsElement.innerHTML = `<tr><td colspan="5" class="empty-state">${app.friendlyError(result.error)}</td></tr>`;
+      rowsElement.innerHTML = `<tr><td colspan="6" class="empty-state">${escapeHtml(app.friendlyError(result.error))}</td></tr>`;
       return;
     }
-    const tasks = result.data || [];
-    renderTaskSummary(tasks);
-    renderTasks(tasks);
+    allTasks = result.data || [];
+    renderTaskSummary(allTasks);
+    refreshTaskView();
   }
 
   document.getElementById('refresh-tasks').addEventListener('click', loadTasks);
+  taskSearch.addEventListener('input', refreshTaskView);
+  taskStatusFilter.addEventListener('change', refreshTaskView);
+  taskArchiveFilter.addEventListener('change', refreshTaskView);
   fileInput.addEventListener('change', () => setFileState(fileInput.files[0]));
   addAsinEntry.addEventListener('click', () => addAsinRow({ role: 'competitor' }));
   document.getElementById('logout').addEventListener('click', async () => {

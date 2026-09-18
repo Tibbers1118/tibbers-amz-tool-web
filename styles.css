@@ -272,6 +272,15 @@ h3 { margin-bottom: 8px; font-size: 15px; font-weight: 600; }
 .section-heading p { margin: 0 0 3px; color: var(--muted); font-size: 12px; }
 .section-tools { display: flex; align-items: center; gap: 12px; }
 .last-refresh { color: var(--muted); font-size: 11px; white-space: nowrap; }
+.task-filters { display: flex; align-items: end; gap: 10px; margin-bottom: 12px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--canvas); }
+.task-search { position: relative; display: flex; flex: 1 1 260px; align-items: center; min-width: 180px; }
+.task-search input, .task-filter select { width: 100%; min-height: 38px; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; color: var(--ink); font: inherit; font-size: 13px; }
+.task-search input { padding: 0 12px 0 34px; }
+.task-search input:focus, .task-filter select:focus { border-color: var(--blue); outline: 0; }
+.task-search-icon { position: absolute; left: 12px; color: var(--muted); font-size: 20px; line-height: 1; pointer-events: none; }
+.task-filter { display: grid; flex: 0 0 132px; gap: 4px; color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: .04em; }
+.task-filter select { padding: 0 8px; font-size: 12px; }
+.task-filter-count { flex: 0 0 auto; padding-bottom: 10px; color: var(--muted); font-size: 11px; white-space: nowrap; }
 .table-panel { overflow: hidden; border: 1px solid var(--line-strong); border-radius: var(--radius-lg); background: var(--canvas); }
 .table-panel-head { display: flex; align-items: center; justify-content: space-between; min-height: 38px; padding: 0 18px; border-bottom: 1px solid var(--line); background: #fbfbfd; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 9px; letter-spacing: .08em; }
 .table-panel-head > span:last-child { color: var(--blue); }
@@ -286,6 +295,20 @@ h3 { margin-bottom: 8px; font-size: 15px; font-weight: 600; }
 .data-table a:hover { text-decoration: underline; }
 .empty-state { padding: 56px 20px !important; color: var(--muted); text-align: center !important; font-size: 13px; }
 .error-cell { max-width: 360px; color: var(--danger); line-height: 1.5; white-space: normal !important; }
+.task-table { min-width: 1030px; }
+.task-table tr.is-pinned { background: #f7fbff; }
+.task-table tr.is-archived { opacity: .68; }
+.task-asin-cell { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+.task-actions-heading, .task-actions-cell { text-align: right !important; }
+.task-actions-cell { width: 74px; }
+.pin-mark { margin-left: 5px; color: var(--blue); font-size: 12px; }
+.task-action-menu { position: relative; display: inline-block; }
+.task-action-menu summary { display: inline-grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line-strong); border-radius: 8px; background: #fff; color: var(--muted); cursor: pointer; font-size: 15px; letter-spacing: 2px; list-style: none; }
+.task-action-menu summary::-webkit-details-marker { display: none; }
+.task-action-menu summary:hover, .task-action-menu[open] summary { border-color: var(--blue); color: var(--blue); }
+.task-action-popover { position: absolute; z-index: 5; top: calc(100% + 6px); right: 0; display: grid; min-width: 126px; padding: 5px; border: 1px solid var(--line-strong); border-radius: 10px; background: #fff; box-shadow: 0 10px 26px rgba(0, 0, 0, .12); }
+.task-action-popover button, .task-action-popover a { display: block; padding: 9px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--ink-soft); font-size: 12px; text-align: left; text-decoration: none; white-space: nowrap; }
+.task-action-popover button:hover, .task-action-popover a:hover { background: var(--blue-soft); color: var(--blue); }
 
 /* Report shell */
 .report-hero { margin-bottom: 24px; }
@@ -421,6 +444,10 @@ h3 { margin-bottom: 8px; font-size: 15px; font-weight: 600; }
   .report-stage-bar { padding: 0 14px; }
   .section-heading { align-items: flex-start; flex-direction: column; }
   .section-tools { width: 100%; justify-content: space-between; }
+  .task-filters { align-items: stretch; flex-wrap: wrap; }
+  .task-search { flex-basis: 100%; }
+  .task-filter { flex: 1 1 130px; }
+  .task-filter-count { padding-bottom: 0; align-self: center; }
   .report-toolbar { min-height: 0; padding: 0; }
   .report-toolbar-actions { width: 100%; }
   .report-toolbar-actions .button { flex: 1; }

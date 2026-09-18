@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>工具台 - Tibbers AMZ</title>
+    <title>Amazon 链接诊断</title>
     <link rel="stylesheet" href="../styles.css" />
   </head>
   <body>
     <header class="site-header">
-      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Tibbers AMZ</span></div>
-      <nav class="header-nav" aria-label="主导航"><span class="is-active">关键词作战</span><span>AMAZON US</span></nav>
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Amazon 链接诊断</span></div>
+      <nav class="header-nav" aria-label="主导航"><span class="is-active">Amazon 链接诊断</span><span>AMAZON US</span></nav>
       <div class="header-spacer"></div>
       <div class="header-meta">
         <span class="header-status"><span class="status-dot status-ready" aria-hidden="true"></span>系统在线</span>
@@ -26,9 +26,9 @@
       </section>
       <section class="page-hero tool-hero">
         <div>
-          <p class="eyebrow">WORKSPACE / KEYWORD OPS</p>
-          <h1>关键词作战</h1>
-          <p class="page-lede">集中管理搜索词分析任务，追踪从报表到报告的每一次运行。</p>
+          <p class="eyebrow">WORKSPACE / LISTING DIAGNOSIS</p>
+          <h1>Amazon 链接诊断</h1>
+          <p class="page-lede">集中管理 Listing 诊断任务，追踪从报表到诊断报告的每一次运行。</p>
         </div>
         <div class="hero-status"><span>ANALYSIS ENGINE</span><strong><span class="status-dot status-ready" aria-hidden="true"></span>可用</strong><small>后台 Worker 在线</small><div class="signal-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="signal-caption">QUEUE / READY / 24×7</span></div>
       </section>
@@ -62,7 +62,13 @@
 
       <section class="task-section" aria-labelledby="tasks-title">
         <div class="section-heading"><div><p class="eyebrow">RUN HISTORY</p><h2 id="tasks-title">我的任务</h2></div><div class="section-tools"><span id="last-refresh" class="last-refresh">正在同步</span><button id="refresh-tasks" class="button button-secondary button-small button-icon" type="button" title="刷新任务" aria-label="刷新任务"><span aria-hidden="true">↻</span></button></div></div>
-        <div class="table-panel"><div class="table-panel-head"><span class="table-panel-code">TASK STREAM / 01</span><span id="task-stream-status">CONNECTING</span></div><div class="table-scroll"><table class="data-table"><thead><tr><th>提交时间</th><th>ASIN</th><th>状态</th><th>报告</th><th>失败原因</th></tr></thead><tbody id="task-rows"><tr><td colspan="5" class="empty-state">正在读取任务…</td></tr></tbody></table></div></div>
+        <div class="task-filters" aria-label="任务搜索与筛选">
+          <label class="task-search"><span class="visually-hidden">搜索任务</span><span class="task-search-icon" aria-hidden="true">⌕</span><input id="task-search" type="search" placeholder="搜索 ASIN 或任务 ID" autocomplete="off" /></label>
+          <label class="task-filter"><span>状态</span><select id="task-status-filter"><option value="all">全部状态</option><option value="待处理">待处理</option><option value="进行中">分析中</option><option value="待人工确认">待人工确认</option><option value="已完成">已完成</option><option value="失败">失败</option></select></label>
+          <label class="task-filter"><span>归档</span><select id="task-archive-filter"><option value="active">当前任务</option><option value="archived">已归档</option><option value="all">全部任务</option></select></label>
+          <span id="task-filter-count" class="task-filter-count">-</span>
+        </div>
+        <div class="table-panel"><div class="table-panel-head"><span class="table-panel-code">TASK STREAM / 01</span><span id="task-stream-status">CONNECTING</span></div><div class="table-scroll"><table class="data-table task-table"><thead><tr><th>提交时间</th><th>ASIN</th><th>状态</th><th>报告</th><th>失败原因</th><th class="task-actions-heading">操作</th></tr></thead><tbody id="task-rows"><tr><td colspan="6" class="empty-state">正在读取任务…</td></tr></tbody></table></div></div>
       </section>
     </main>
     <footer class="site-footer site-footer-light">
