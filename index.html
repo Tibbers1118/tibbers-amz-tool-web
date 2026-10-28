@@ -6,30 +6,54 @@
     <title>Amazon 链接诊断</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="auth-page">
+  <body class="auth-page" data-theme="dark">
     <header class="auth-nav">
       <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>Amazon 链接诊断</span></div>
-      <div class="auth-nav-meta">AMAZON US / PRIVATE WORKSPACE</div>
+      <div class="auth-nav-actions">
+        <span class="auth-nav-meta">美国站 / 专属分析工作区</span>
+        <button id="theme-toggle" class="auth-theme-toggle" type="button" aria-label="切换为白天模式" title="切换主题"><span aria-hidden="true">☼</span></button>
+      </div>
     </header>
+
     <main class="auth-layout">
       <section class="auth-intro" aria-labelledby="auth-title">
-        <p class="eyebrow">AMAZON LISTING DIAGNOSIS / 01</p>
+        <p class="eyebrow">LISTING GROWTH DIAGNOSTICS <span>·</span> 01—06</p>
         <h1 id="auth-title">Amazon<br /><span>链接诊断</span></h1>
-        <div class="auth-display" aria-hidden="true"><span class="display-index">01</span><span class="display-rule"></span><span class="display-bars"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="display-caption">SEARCH / SIGNAL / ACTION</span></div>
-        <p class="intro-copy">将广告与市场信号转化为可执行的 Listing 运营判断。</p>
-        <div class="intro-meta"><span class="status-dot status-ready" aria-hidden="true"></span><span>基础分析服务已就绪</span></div>
-        <div class="auth-spectrum" aria-hidden="true">
-          <div class="spectrum-head"><span>LIVE SIGNAL</span><span>US / 01</span></div>
-          <div class="spectrum-plot"><span class="spectrum-axis">100</span><div class="spectrum-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="spectrum-axis">000</span></div>
-          <div class="spectrum-foot"><span>SEARCH TERMS</span><span>READY TO OPERATE</span></div>
+        <p class="intro-copy">从搜索词、自然位、竞品、图片到广告，生成一份可以直接执行的 Listing 增长诊断报告。</p>
+
+        <div class="auth-module-rail" aria-label="六模块诊断流程">
+          <div class="auth-rail-heading"><span>诊断路径</span><span>6 MODULES</span></div>
+          <ol class="auth-module-list">
+            <li class="auth-module is-active"><span class="auth-module-number">01</span><span><strong>关键词作战</strong><small>找出值得先拿下的词</small></span><span class="auth-module-arrow">↗</span></li>
+            <li class="auth-module"><span class="auth-module-number">02</span><span><strong>自然位标杆</strong><small>看清你和标杆的距离</small></span><span class="auth-module-arrow">↗</span></li>
+            <li class="auth-module"><span class="auth-module-number">03</span><span><strong>否定词清单</strong><small>识别该拦截的浪费流量</small></span><span class="auth-module-arrow">↗</span></li>
+            <li class="auth-module"><span class="auth-module-number">04</span><span><strong>竞对对比</strong><small>拆解高销量竞品的表达</small></span><span class="auth-module-arrow">↗</span></li>
+            <li class="auth-module"><span class="auth-module-number">05</span><span><strong>图片与卖点</strong><small>检查买家是否快速看懂</small></span><span class="auth-module-arrow">↗</span></li>
+            <li class="auth-module"><span class="auth-module-number">06</span><span><strong>广告优化</strong><small>把数据串成下一步动作</small></span><span class="auth-module-arrow">↗</span></li>
+          </ol>
         </div>
-        <div class="auth-signals" aria-label="工作区信息">
-          <div class="auth-signal"><span>Market</span><strong>Amazon US</strong></div>
-          <div class="auth-signal"><span>Workspace</span><strong>Private analysis</strong></div>
-        </div>
+
+        <section class="auth-report-preview" aria-label="报告结构预览">
+          <div class="auth-preview-heading"><span>REPORT PREVIEW</span><span>示例结构 / 6 个模块</span></div>
+          <div class="auth-preview-body">
+            <div class="auth-preview-title"><span class="auth-preview-label">关键词作战总表</span><strong>优先处理正在接近标杆的词</strong></div>
+            <div class="auth-preview-stats">
+              <div><span>可行动关键词</span><strong>128</strong><small>按机会排序</small></div>
+              <div><span>平均自然位</span><strong>18.4</strong><small>较上期 ↑ 4.2</small></div>
+              <div><span>目标 ACOS</span><strong>25%</strong><small>当前规则</small></div>
+            </div>
+            <div class="auth-preview-table">
+              <div class="auth-preview-row is-head"><span>关键词</span><span>自然位</span><span>ACOS</span><span>动作</span></div>
+              <div class="auth-preview-row"><span>glass water bottle</span><span>08</span><span>21.4%</span><b>守</b></div>
+              <div class="auth-preview-row"><span>leak proof bottle</span><span>16</span><span>29.8%</span><b class="is-warning">观察</b></div>
+              <div class="auth-preview-row"><span>insulated bottle</span><span>—</span><span>34.1%</span><b class="is-blue">加</b></div>
+            </div>
+          </div>
+        </section>
       </section>
 
       <section class="auth-panel panel" aria-label="账号登录">
+        <div class="auth-brand-lockup"><img src="assets/david-archy-wordmark.png" alt="DAVID ARCHY" /><span>运营诊断工作区</span></div>
         <div class="panel-heading">
           <div>
             <p class="eyebrow">WORKSPACE ACCESS</p>
@@ -49,11 +73,14 @@
           <button id="auth-submit" class="button button-primary" type="submit">进入工具 <span aria-hidden="true">→</span></button>
           <p id="auth-message" class="form-message" role="status" aria-live="polite"></p>
         </form>
+        <p class="auth-panel-note"><span aria-hidden="true">⌁</span>你的报告仅在专属工作区内保存</p>
       </section>
     </main>
+
     <footer class="site-footer site-footer-dark">
-      <span>备案号：</span><a href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">粤ICP备2026131354号</a>
+      <span>Amazon Listing Intelligence</span><span>备案号：</span><a href="https://beian.miit.gov.cn" target="_blank" rel="noreferrer">粤ICP备2026131354号</a>
     </footer>
+    <script src="theme.js"></script>
     <script src="vendor/supabase.min.js"></script>
     <script src="supabase-config.js"></script>
     <script src="app.js"></script>
